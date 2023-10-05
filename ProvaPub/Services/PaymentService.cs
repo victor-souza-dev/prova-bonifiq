@@ -1,22 +1,38 @@
-﻿using ProvaPub.Helpers;
+﻿using Microsoft.Extensions.Caching.Memory;
+using ProvaPub.Helpers;
 namespace ProvaPub.Services;
 
 // Template Method
-public abstract class ListService<T, TList>
+public abstract class PaymentService<T, TList>
 {
-    protected readonly QueryManipulator _queryManipulator;
+    private readonly QueryManipulator _queryManipulator;
+    private readonly IMemoryCache _memoryCache;
 
-    protected ListService(QueryManipulator queryManipulator)
+    public PaymentService()
     {
-        _queryManipulator = queryManipulator;
+        _queryManipulator = new QueryManipulator();
+        _memoryCache = new MemoryCache(new MemoryCacheOptions());
     }
 
     // Método que realiza paginação em cima do resultado da GetItemsQuery - GetAll
     public TList GetPaginationList(int page = 1, int pageSize = 10, string query = "")
     {
+        var formattedQuery = _queryManipulator.FormatQuery(query);
+        string ME_KEY = $"{page}_{pageSize}_{formattedQuery}";
+
+        if (_memoryCache.TryGetValue(ME_KEY, out TList me))
+        {
+            return me;
+        }
+
+        var memoryCacheEntryOptions = new MemoryCacheEntryOptions
+        {
+            AbsoluteExpirationRelativeToNow = TimeSpan.FromSeconds(3600),
+            SlidingExpiration = TimeSpan.FromSeconds(1200)
+        };
+
         ValidateParameters(ref page, ref pageSize);
 
-        var formattedQuery = _queryManipulator.FormatQuery(query);
         var itemsQuery = GetItemsQuery(formattedQuery);
         int totalCount = itemsQuery.Count();
         int startIndex = (page - 1) * pageSize;
@@ -28,7 +44,11 @@ public abstract class ListService<T, TList>
 
         bool hasNext = startIndex + pageSize < totalCount;
 
-        return CreateList(itemsOnPage, totalCount, hasNext);
+        TList payload = CreateList(itemsOnPage, totalCount, hasNext);
+
+        _memoryCache.Set(ME_KEY, payload, memoryCacheEntryOptions);
+
+        return payload;
     }
 
     // Retorna um elemento específico com base no id

@@ -1,16 +1,14 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using ProvaPub.Helpers;
 using ProvaPub.Infra.Db;
 using ProvaPub.Models.Entities;
 
 namespace ProvaPub.Services;
 
-public class CustomerService : ListService<Customer, CustomerList>
+public class CustomerService : PaymentService<Customer, CustomerList>
 {
     private readonly TestDbContext _ctx;
 
-    public CustomerService(TestDbContext ctx, QueryManipulator queryManipulator)
-        : base(queryManipulator)
+    public CustomerService(TestDbContext ctx)
     {
         _ctx = ctx;
     }

@@ -1,14 +1,12 @@
-﻿using ProvaPub.Helpers;
-using ProvaPub.Infra.Db;
+﻿using ProvaPub.Infra.Db;
 using ProvaPub.Models.Entities;
 
 namespace ProvaPub.Services;
 
-public class ProductService : ListService<Product, ProductList>
+public class ProductService : PaymentService<Product, ProductList>
 {
     private readonly TestDbContext _ctx;
-    public ProductService(TestDbContext ctx, QueryManipulator queryManipulator)
-        : base(queryManipulator)
+    public ProductService(TestDbContext ctx)
     {
         _ctx = ctx;
     }
