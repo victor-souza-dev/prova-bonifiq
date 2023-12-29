@@ -1,5 +1,6 @@
 ﻿using Bogus;
 using Microsoft.EntityFrameworkCore;
+using ProvaPub.Models.DTOs;
 using ProvaPub.Models.Entities;
 
 namespace ProvaPub.Infra.Db;
@@ -15,8 +16,11 @@ public class TestDbContext : DbContext
     {
         base.OnModelCreating(modelBuilder);
 
+        modelBuilder.Entity<NSerial>().ToTable("NSerials");
+
         modelBuilder.Entity<Customer>().HasData(getCustomerSeed());
         modelBuilder.Entity<Product>().HasData(getProductSeed());
+        modelBuilder.Entity<NSerial>().HasKey(e => e.IdNSerial);
     }
 
     private Customer[] getCustomerSeed()
@@ -45,8 +49,8 @@ public class TestDbContext : DbContext
         }
         return result.ToArray();
     }
-
     public DbSet<Customer> Customers { get; set; }
     public DbSet<Product> Products { get; set; }
     public DbSet<Order> Orders { get; set; }
+    public DbSet<NSerial> NSerials { get; set; }
 }

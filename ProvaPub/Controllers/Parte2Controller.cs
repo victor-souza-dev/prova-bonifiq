@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using ProvaPub.Models.DTOs;
 using ProvaPub.Models.Entities;
 using ProvaPub.Services;
 

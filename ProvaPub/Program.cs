@@ -16,6 +16,7 @@ builder.Services.AddScoped<IPaymentMethod, PixPaymentRepository>();
 builder.Services.AddScoped<IPaymentMethod, CreditPaymentRepository>();
 builder.Services.AddScoped<IPaymentMethod, PaypalPaymentRepository>();
 builder.Services.AddScoped<IRandomService, RandomService>();
+builder.Services.AddScoped<INSerialRepository, NSerialRepository>();
 builder.Services.AddScoped<ProductService>();
 builder.Services.AddScoped<CustomerService>();
 builder.Services.AddScoped<OrderService>();
